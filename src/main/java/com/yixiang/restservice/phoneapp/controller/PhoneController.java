@@ -15,18 +15,16 @@ public class PhoneController {
     @CrossOrigin(origins = "http://localhost:4200")
     @ResponseBody
     public String[] getPhone(@PathVariable("phoneNum") String phoneNum, @PathVariable("pageNum") int pageNum) {
+
         List<String> res = new ArrayList<>();
         res.add(totalCount((phoneNum)));
         List<String> total = phoneCombinations(phoneNum);
         int totalSize = total.size();
-        if (totalSize <= pageCapacity) {
-            res.addAll(1, total);
+
+        if (pageNum * pageCapacity > totalSize) {
+            res.addAll(1, total.subList((pageNum-1) * pageCapacity, total.size()));
         } else {
-            if (pageNum * pageCapacity > totalSize) {
-                res.addAll(1, total.subList((pageNum-1) * pageCapacity, -1));
-            } else {
-                res.addAll(1, total.subList((pageNum-1) * pageCapacity, pageNum * pageCapacity));
-            }
+            res.addAll(1, total.subList((pageNum-1) * pageCapacity, pageNum * pageCapacity));
         }
 
         return res.toArray(new String[0]);
